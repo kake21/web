@@ -1,0 +1,38 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+# A second push to the same branch makes the first run's answer irrelevant.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    check:
+        name: types and tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  # Matches flake.nix, so CI fails for the same reasons a build does.
+                  node-version: '24'
+                  cache: npm
+
+            - run: npm ci
+
+            # tsconfig.json extends .svelte-kit/tsconfig.json, which this creates.
+            - run: npx svelte-kit sync
+
+            - name: svelte-check
+              run: npm run check
+
+            - name: vitest
+              run: npm test
+
+            - name: build
+              run: npm run build

@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+/*
+ * projectNext pairs a sans for UI with Playfair Display for section headings and quotes
+ * ($fonts-secondary in its SCSS). This keeps the same pairing, so headings and
+ * pull quotes have a face of their own.
+ */
+@theme {
+    --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+/*
+ * Design tokens.
+ *
+ * Referenced from components as Tailwind v4's arbitrary-property shorthand -
+ * `bg-(--surface-base)`, `text-(--text-secondary)` - rather than through @theme, so the
+ * class names match the ones the layout was specified in.
+ */
+:root {
+    --bg: #f1f3f6;
+    --surface-base: #ffffff;
+    --surface-sunken: #e8ebf0;
+    /* A row sitting on top of a card. projectNext calls these surface-raised / surface-hover. */
+    --surface-raised: #f3f5f9;
+    --surface-hover: #e7ecf3;
+    --border: #e2e6ec;
+    --text: #171a1f;
+    --text-secondary: #6b7280;
+    --accent-blue: #2563eb;
+    --accent-blue-ink: #ffffff;
+    --danger: #b91c1c;
+}
+
+/*
+ * Dark mode is projectNext's StjerneInnbygger theme, taken verbatim from
+ * src/app/users/[username]/(user-admin)/theme/theme.ts.
+ *
+ * Mapping projectNext's tokens onto these needs one thing said out loud, because it inverts what
+ * a light-first palette assumes: in projectNext the page is NOT the darkest surface. layout.module.scss lays the page
+ * gradient over $surface-raised, while a card island is $surface-base - which is darker. So cards
+ * sit below the page rather than above it, and anything resting on a card comes back up to
+ * surface-raised.
+ *
+ * That is also why --surface-sunken and --surface-raised share a value here rather than by
+ * accident: both mean "resting on a card", and projectNext's own TextInput uses $surface-raised
+ * with $surface-hover on focus, exactly as its list rows do.
+ */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* $surface-raised - the base the page gradient is laid over */
+        --bg: hsl(202, 50%, 13%);
+        /* $surface-base - a card island */
+        --surface-base: hsl(202, 64%, 8%);
+        /* $surface-raised - rows and inputs resting on a card */
+        --surface-sunken: hsl(202, 50%, 13%);
+        --surface-raised: hsl(202, 50%, 13%);
+        --surface-hover: hsl(205, 40%, 20%);
+        /* $surface-subtle - borders and the progress-bar track */
+        --border: hsl(205, 30%, 35%);
+
+        --text: hsl(0, 0%, 80%);
+        /* $text-muted */
+        --text-secondary: hsl(0, 0%, 70%);
+        /* $text-inv - text on an accent fill */
+        --accent-blue-ink: hsl(0, 0%, 10%);
+
+        /*
+         * The full accent set. Only blue (primary) and red (error, via --danger) have callers
+         * today; the rest are carried so this is the theme rather than the subset this site happens
+         * to use, and so a status colour already exists when one is wanted.
+         */
+        --accent-red: hsl(0, 80%, 60%);
+        --accent-orange: hsl(40, 80%, 60%);
+        --accent-yellow: hsl(60, 80%, 60%);
+        --accent-green: hsl(120, 80%, 60%);
+        --accent-cyan: hsl(180, 80%, 60%);
+        --accent-blue: hsl(207, 91%, 65%);
+        --accent-magenta: hsl(300, 80%, 60%);
+        --accent-violet: hsl(260, 80%, 60%);
+
+        --danger: var(--accent-red);
+
+        /* $layer - the translucent wash projectNext lays over raised surfaces */
+        --layer: hsla(211, 48.1%, 35.5%, 0.18);
+    }
+}
+
+/*
+ * Page background, ported from projectNext's src/app/layout.module.scss:
+ *
+ *     background:
+ *         linear-gradient(125deg, color-mix(in srgb, $accent-blue 30%, transparent) 0%,
+ *                                 color-mix(in srgb, $surface-base 20%, transparent) 70%),
+ *         $surface-raised;
+ *
+ * projectNext puts this on <body>, which works there because its wrapper is exactly 100dvh - the
+ * gradient is always viewport-sized. these pages scroll, so on body the gradient would stretch to
+ * the full document height and change angle with content length. Putting it on the canvas with
+ * background-attachment: fixed keeps it viewport-sized however long the page gets.
+ *
+ * projectNext layers this over $colors-surface-raised; here that role is --bg. (The
+ * --surface-raised token above is a different thing - the surface of a row sitting on a card -
+ * and keeps projectNext's name for it because the ported card styles refer to it that way.)
+ */
+html {
+    background:
+        linear-gradient(
+            125deg,
+            color-mix(in srgb, var(--accent-blue) 30%, transparent) 0%,
+            color-mix(in srgb, var(--surface-base) 20%, transparent) 70%
+        ),
+        var(--bg);
+    background-attachment: fixed;
+}
+
+body {
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Honour a request for less motion, whatever ends up animating. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

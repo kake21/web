@@ -1,15 +1,6 @@
 @import 'tailwindcss';
 
 /*
- * projectNext pairs a sans for UI with Playfair Display for section headings and quotes
- * ($fonts-secondary in its SCSS). This keeps the same pairing, so headings and
- * pull quotes have a face of their own.
- */
-@theme {
-    --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-}
-
-/*
  * Design tokens.
  *
  * Referenced from components as Tailwind v4's arbitrary-property shorthand -
@@ -20,7 +11,6 @@
     --bg: #f1f3f6;
     --surface-base: #ffffff;
     --surface-sunken: #e8ebf0;
-    /* A row sitting on top of a card. projectNext calls these surface-raised / surface-hover. */
     --surface-raised: #f3f5f9;
     --surface-hover: #e7ecf3;
     --border: #e2e6ec;
@@ -50,7 +40,7 @@
         /* $surface-raised - the base the page gradient is laid over */
         --bg: hsl(202, 50%, 13%);
         /* $surface-base - a card island */
-        --surface-base: hsl(202, 64%, 8%);
+        --surface-base: #0A1D29;
         /* $surface-raised - rows and inputs resting on a card */
         --surface-sunken: hsl(202, 50%, 13%);
         --surface-raised: hsl(202, 50%, 13%);
@@ -80,8 +70,6 @@
 
         --danger: var(--accent-red);
 
-        /* $layer - the translucent wash projectNext lays over raised surfaces */
-        --layer: hsla(211, 48.1%, 35.5%, 0.18);
     }
 }
 
